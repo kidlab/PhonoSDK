@@ -26,6 +26,7 @@ package com.phono
 	private var _mic:Microphone; // Internal mic handle for permission checking
         private var _hasEC:Boolean = false; // Are we on a flash player with a working EC
 	private var _boxOpen:Boolean = false;
+  private var _listenOnly:Boolean = false;
 	private var _ncDict:Dictionary = new Dictionary(); // rtmpUri -> NC
 	private var _ncRefCount:Dictionary = new Dictionary();
 	private var _waitQs:Dictionary = new Dictionary(); // rtmpUri -> Array of functions to call
@@ -102,6 +103,20 @@ package com.phono
             _version = version;
         }
         
+        // Modified by manvuong
+        // Custom code.
+        public function setListenOnly(listenOnly:Boolean):void
+        {
+            _listenOnly = listenOnly;
+        }
+        
+        // Modified by manvuong
+        // Custom code.
+        public function get listenOnly():Boolean
+        {
+            return _listenOnly;
+        }
+        
         public function nearID(url:String):String
         {
             var nc:NetConnection = getNetConnection(url);
@@ -164,7 +179,8 @@ package com.phono
 	    // Force an open request for microphone permisson if we don't already have it - 
 	    // Flash will automatically open the box, so we need to be ready
 	    setTimeout(function():void {
-		if (_mic && _mic.muted) {
+    // Modified by manvuong
+		if (!_listenOnly && _mic && _mic.muted) {
 		    showPermissionBox();
 		}
 	    },10);
