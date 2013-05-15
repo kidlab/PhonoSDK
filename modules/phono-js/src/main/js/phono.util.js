@@ -18,6 +18,9 @@
    },
    // From jQuery 1.4.2
 	each: function( object, callback, args ) {
+    if(!object)
+      return null;
+      
 		var name, i = 0,
 			length = object.length,
 			isObj = length === undefined || $.isFunction(object);
