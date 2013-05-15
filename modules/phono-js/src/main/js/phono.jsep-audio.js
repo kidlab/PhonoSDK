@@ -133,6 +133,9 @@ JSEPAudio.prototype.share = function(transport, autoPlay, codec) {
             return null;
         },
         mute: function(value) {
+            if(!JSEPAudio.localStream)
+                return false;
+                
             var tracks;
             if (webkitMediaStream.prototype.getAudioTracks) {
                 tracks = JSEPAudio.localStream.getAudioTracks();
@@ -334,7 +337,9 @@ JSEPAudio.prototype.transport = function(config) {
             Phono.log.debug("Adding localStream");
 
             var cb2 = function() {
-                pc.addStream(JSEPAudio.localStream);
+                // Custom code.
+                if(!config.listenOnly)
+                    pc.addStream(JSEPAudio.localStream);
                 
                 var cb = function(localDesc) {
                     var sd = new RTCSessionDescription(localDesc);
@@ -359,10 +364,17 @@ JSEPAudio.prototype.transport = function(config) {
                 }
             }
             
-            if (audio.permission()) {
+            // Custom code.
+            Phono.log.info("listenOnly: " + config.listenOnly);
+            if(config.listenOnly) {
                 cb2();
-            } else {
-                audio.showPermissionBox(cb2);
+            }
+            else {
+                if (audio.permission()) {
+                    cb2();
+                } else {
+                    audio.showPermissionBox(cb2);
+                }
             }
         },
         processTransport: function(t, update, iq) {

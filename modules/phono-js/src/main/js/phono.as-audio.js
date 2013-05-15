@@ -1,10 +1,16 @@
 function FlashAudio(phono, config, callback) {
     this.type = "flash";
 
+    // Custom code
+    var audioUrl = config.flashAudioUrl;
+    if(!audioUrl || audioUrl == '') {
+        audioUrl = "//" + MD5.hexdigest(window.location.host+phono.config.apiKey) + ".u.phono.com/releases/" + Phono.version + "/plugins/audio/phono.audio.swf";
+    }
+    
     // Define defualt config and merge from constructor
     this.config = Phono.util.extend({
         protocol: "rtmfp",
-        swf: "//" + MD5.hexdigest(window.location.host+phono.config.apiKey) + ".u.phono.com/releases/" + Phono.version + "/plugins/audio/phono.audio.swf",
+        swf: audioUrl,
         cirrus: "rtmfp://phono-fms1-ext.voxeolabs.net/phono",
         bridged: false,
         reliable: false,
@@ -157,7 +163,20 @@ FlashAudio.prototype.share = function(transport, autoPlay, codec) {
         Phono.log.info("Direct media share with peer " + transport.peerID);
     }
     var isSecure = false;
-    var share = this.$flash.share(url, autoPlay, codec.id, codec.name, codec.rate, true, peerID, this.config.video, this.config.reliable);
+    
+    // Custom code
+    Phono.log.info("listenOnly: " + this.config.listenOnly);
+    try{
+        this.$flash.setListenOnly(this.config.listenOnly);
+    } catch(e) {}
+    
+    var video = false;
+    if(this.config.media) {
+        video =  this.config.media.video;
+        if(video === undefined)
+            video = false;
+    }
+    var share = this.$flash.share(url, autoPlay, codec.id, codec.name, codec.rate, true, peerID, video, this.config.reliable);
     if (url.indexOf("rtmfp://") == 0) isSecure = true;
 
     var s = {

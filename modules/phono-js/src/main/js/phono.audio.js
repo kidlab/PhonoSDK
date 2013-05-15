@@ -23,6 +23,7 @@
                 return Phono.util.loggify("PhonegapAndroidAudio", new PhonegapAndroidAudio(phono, config, callback));
                 
             } else if (config.type === "flash") {
+                config.flashAudioUrl = phono.config.flashAudioUrl;
                 return Phono.util.loggify("FlashAudio", new FlashAudio(phono, config, callback));
 
             } else if (config.type === "jsep") {
@@ -47,6 +48,7 @@
                     return Phono.util.loggify("PhonegapAndroidAudio", new PhonegapAndroidAudio(phono, config, callback));
                 } else { 
                     Phono.log.info("Using Flash default"); 
+                    config.flashAudioUrl = phono.config.flashAudioUrl;
                     return Phono.util.loggify("FlashAudio", new FlashAudio(phono, config, callback));
                     
                 }

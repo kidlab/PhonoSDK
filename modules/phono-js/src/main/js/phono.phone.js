@@ -43,9 +43,13 @@
          volume: 50,
          gain: 50,
          tones: false,
+         listenOnly: false, // Custom config.
          codecs: phone.config.codecs,
          security: phone._security
       }, config);
+      
+      // Custom config.
+      this.audioLayer.config.listenOnly = this.config.listenOnly;
       
       // Apply config
       Phono.util.each(this.config, function(k,v) {
