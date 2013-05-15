@@ -68,8 +68,9 @@ package com.phono.impl
 	        _mic.setSilenceLevel(0,2000);
 	        _mic.gain = 50;
                 _mic.rate = 16; 
+                _gain = _mic.gain;
             }
-	    _gain = _mic.gain;
+	    
 	    _queue = queue;
             _direct = direct;
             // Set the echo suppression state
@@ -194,11 +195,11 @@ package com.phono.impl
                 if (_suppress) {
                     // We need to enable the echo canceller
                     enhancedOptions.mode = MicrophoneEnhancedMode.FULL_DUPLEX;
-                    _mic.enhancedOptions = enhancedOptions;
+                    if (_mic) _mic.enhancedOptions = enhancedOptions;
                 } else {
                     // We need to disable the echo canceller
                     enhancedOptions.mode = MicrophoneEnhancedMode.OFF;
-                    _mic.enhancedOptions = enhancedOptions;
+                    if (_mic) _mic.enhancedOptions = enhancedOptions;
                 }
             } else {
 	        if (_suppress) {
@@ -237,16 +238,16 @@ package com.phono.impl
 		    if (_tail > 0) {
 			//trace("t: " + _tail);
 			_tail = _tail - 1;
-			_mic.gain = 0;	
+			if (_mic) _mic.gain = 0;	
 		    } else {
-			if (!_mute) _mic.gain = _gain;	
+			if (!_mute && _mic) _mic.gain = _gain;	
 		    }
 		} catch (e:Error) {
 		    trace("Error accessing samples, stop suppressing");
 		    trace(e);
 		    _soundTimer.stop();
 		    _suppress = false;
-		    if (!_mute) _mic.gain = _gain;
+		    if (!_mute && _mic) _mic.gain = _gain;
 		}
 	    }
 	}			
