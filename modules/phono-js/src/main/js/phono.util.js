@@ -237,18 +237,22 @@
     loggyFunction: function(objName, obj, funcName) {
         var original = obj[funcName];
         obj[funcName] = function() {
-            try { 
-                // Convert arguments to a real array
-                var sep = "";
-                var args = "";
-                for (var i = 0; i < arguments.length; i++) {
+
+            // Convert arguments to a real array
+            var sep = "";
+            var args = "";
+            for (var i = 0; i < arguments.length; i++) {
+                try {
                     args+= (sep + arguments[i]);
-                    sep = ",";
+                } catch(e) {
+                    // To fix bug in IE when concating an object to a string.
+                    args+= (sep + typeof(arguments[i]));
                 }
-                Phono.log.debug("[INVOKE] " + objName + "." + funcName + "(" + args  + ")");
-            } catch (e) {
-                Phono.log.debug("[INVOKE] " + objName + "." + funcName + "(...)");
+
+                sep = ",";
             }
+            
+            Phono.log.debug("[INVOKE] " + objName + "." + funcName + "(" + args  + ")");
             return original.apply(obj, arguments);
         }
     },
